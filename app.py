@@ -1,5 +1,5 @@
 from flask import Flask
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api, reqparse
 from flask_mongoengine import MongoEngine
 
 app = Flask(__name__)
@@ -11,6 +11,33 @@ app.config['MONGODB_SETTINGS'] = {
     "username": "admin",
     "password": "admin"
 }
+
+_user_parse = reqparse.RequestParser()
+_user_parse.add_argument('first_name',
+                         type=str,
+                         required=True,
+                         help="This field cannot be blank."
+                         )
+_user_parse.add_argument('last_name',
+                         type=str,
+                         required=True,
+                         help="This field cannot be blank."
+                         )
+_user_parse.add_argument('cpf',
+                         type=str,
+                         required=True,
+                         help="This field cannot be blank."
+                         )
+_user_parse.add_argument('email',
+                         type=str,
+                         required=True,
+                         help="This field cannot be blank."
+                         )
+_user_parse.add_argument('birth_date',
+                         type=str,
+                         required=True,
+                         help="This field cannot be blank."
+                         )
 
 api = Api(app)
 db = MongoEngine(app)
@@ -31,7 +58,9 @@ class Users(Resource):
 
 class User(Resource):
     def post(self):
-        return {"message": "teste"}
+        data = _user_parse.parse_args()
+        # ** -> converte o json para o formato `field_name=value`
+        UserModel(**data).save()
 
     def get(self, cpf):
         return {"message": "CPF"}
