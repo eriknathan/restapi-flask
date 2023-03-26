@@ -1,4 +1,4 @@
-FROM python:3.10.10-alpine3.17
+FROM python:3.10.9-alpine3.16
 
 EXPOSE 5000
 
@@ -8,6 +8,8 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
-COPY app.py .
+COPY wsgi.py .
+COPY config.py .
+COPY application application
 
-CMD [ "python3", "app.py" ]
+CMD ["python", "wsgi.py"]
